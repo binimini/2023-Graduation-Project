@@ -21,6 +21,8 @@ public class LevelService {
         return levelRepository.findAll();
     }
 
+    public Level getLevelByNumber(int number) {return levelRepository.findTopByNumber(number); }
+
     public Map<Integer, Level> getLevelMapByNumbers(List<Integer> numbers) {
         List<Level> levels = levelRepository.findAllByNumberIn(numbers);
         return levels.stream()

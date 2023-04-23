@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import oncoding.concoder.model.Level;
 
 public class ProblemDto {
 
@@ -22,6 +23,47 @@ public class ProblemDto {
         private String output;
         private LevelDto.Response level;
         private String categories;
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UserStruct {
+        private Integer count;
+        private List<UserInfo> items;
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UserInfo {
+        private String handle;
+        private String profileImageUrl;
+        private Integer solvedCount;
+        private Integer tier;
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UserResponse {
+        private String userId;
+        private String profileImageUrl;
+        private Integer solvedCount;
+        private Level level;
+
+        public UserResponse(UserInfo userInfo, Level level) {
+            this.userId = userInfo.handle;
+            this.profileImageUrl = userInfo.profileImageUrl;
+            this.solvedCount = userInfo.solvedCount;
+            this.level = level;
+        }
     }
 
     @Getter

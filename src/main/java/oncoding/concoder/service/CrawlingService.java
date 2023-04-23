@@ -4,9 +4,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import oncoding.concoder.dto.ProblemDto;
+import oncoding.concoder.dto.ProblemDto.UserInfo;
+import oncoding.concoder.dto.ProblemDto.UserStruct;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -24,6 +27,7 @@ import org.springframework.web.client.RestTemplate;
 public class CrawlingService {
     private static final String BOJ_URL = "https://www.acmicpc.net/problem/";
     private static final String SOLVEDAC_URL = "https://solved.ac/api/v3/problem/lookup?problemIds=";
+    private static final String SOLVEDAC_USER_URL = "https://solved.ac/api/v3/search/user?query=";
     private static final int CRAWLING_COUNT = 10;
 
     public Document connect(int number) throws IOException {
@@ -81,6 +85,20 @@ public class CrawlingService {
             new ParameterizedTypeReference<>(){});
         List<ProblemDto.CreateRequest> rawProblems = response.getBody();
         return rawProblems;
+    }
+
+    public UserInfo getUserInfo(String accountId) {
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<UserStruct> response = restTemplate.exchange(
+            SOLVEDAC_USER_URL+accountId,
+            HttpMethod.GET,
+            null,
+            new ParameterizedTypeReference<>(){});
+        UserStruct result = response.getBody();
+
+
+        if (result.getCount()==0) throw new NoSuchElementException("해당하는 사용자가 없습니다.");
+        return result.getItems().get(0);
     }
 
 }
