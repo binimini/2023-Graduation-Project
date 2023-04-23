@@ -49,13 +49,13 @@ public class Problem extends JpaBaseEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     private Level level;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "problem", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<ProblemCategory> categories = new ArrayList<>();
+    @Column
+    private String categories;
 
     @Builder
     public Problem(Integer number, String title, Integer timeLimit, Integer memoryLimit, Float averageTries,
         String description, String input, String output,
-        Level level, List<ProblemCategory> categories) {
+        Level level, String categories) {
         this.number = number;
         this.title = title;
         this.description = description;

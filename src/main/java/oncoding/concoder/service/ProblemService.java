@@ -10,13 +10,12 @@ import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import oncoding.concoder.dto.ProblemDto;
+import oncoding.concoder.model.Category;
 import oncoding.concoder.model.Level;
 import oncoding.concoder.model.Problem;
-import oncoding.concoder.model.ProblemCategory;
-import oncoding.concoder.repository.ProblemCategoryRepository;
+import oncoding.concoder.repository.CategoryRepository;
 import oncoding.concoder.repository.ProblemRepository;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,6 +23,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ProblemService {
     private final ProblemRepository problemRepository;
+    private final CategoryRepository categoryRepository;
     private final LevelService levelService;
     private final CrawlingService crawlingService;
 
@@ -37,9 +37,6 @@ public class ProblemService {
         List<Problem> list = new ArrayList<>();
         if (standard.equals("level")) {
             list = problemRepository.findRandomByLevel(id, 5);
-        }
-        else if (standard.equals("category")) {
-            list =  problemRepository.findRandomByCategory(id, 5);
         }
         else {
             // TODO : 존재하지않는 standard 예외 처리
@@ -60,8 +57,16 @@ public class ProblemService {
         Map<Integer, Level> levelMap = levelService.getLevelMapByNumbers(rawLevels);
 
         List<Problem> problems = new ArrayList<>();
-        //TODO: 카테고리 생성 및 연관 처리
         for (ProblemDto.CreateRequest rawProblem : rawProblems) {
+            String category = rawProblem.getTags()
+                .stream()
+                .map(t -> t.getBojTagId() + ";")
+                .collect(Collectors.toList()).toString();
+            List<Category> categories = rawProblem.getTags()
+                .stream()
+                .map(t -> new Category(t.getDisplayNames().get(0).getName(), t.getBojTagId(), t.getProblemCount()))
+                .collect(Collectors.toList());
+            categoryRepository.saveAll(categories);
             Map<String, String> content = crawlingService.getContent(rawProblem.getProblemId());
             Problem problem = Problem.builder()
                 .number(rawProblem.getProblemId())
@@ -73,6 +78,7 @@ public class ProblemService {
                 .averageTries(rawProblem.getAverageTries())
                 .timeLimit(Integer.parseInt(content.get("timeLimit").replaceAll("[^\\d]*", "")))
                 .memoryLimit(Integer.parseInt(content.get("memoryLimit").replaceAll("[^\\d]*", "")))
+                .categories(category)
                 .build();
             problems.add(problem);
         }

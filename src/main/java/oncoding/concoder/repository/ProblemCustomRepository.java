@@ -6,5 +6,5 @@ import oncoding.concoder.model.Problem;
 
 public interface ProblemCustomRepository {
     List<Problem> findRandomByLevel(UUID id, int limit);
-    List<Problem> findRandomByCategory(UUID id, int limit);
+    List<Problem> findRandomByCategory(int id, int limit);
 }

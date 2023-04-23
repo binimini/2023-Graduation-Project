@@ -21,7 +21,29 @@ public class ProblemDto {
         private String input;
         private String output;
         private LevelDto.Response level;
-        private List<CategoryDto.Response> categories;
+        private String categories;
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class TagStruct {
+        private String key;
+        private Integer bojTagId;
+        private Integer problemCount;
+        private List<TagNameStruct> displayNames;
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class TagNameStruct {
+        private String name;
+        private String language;
     }
 
     @Getter
@@ -34,5 +56,6 @@ public class ProblemDto {
         private String titleKo;
         private Integer level;
         private Float averageTries;
+        private List<TagStruct> tags;
     }
 }
