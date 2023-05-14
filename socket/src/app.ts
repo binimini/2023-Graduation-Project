@@ -1,25 +1,34 @@
 import dotenv from "dotenv";
-import Koa, {Context} from 'koa';
-import * as process from "process";
+import express from "express";
+import cors from 'cors';
 import * as http from "http";
 import {Server} from 'socket.io';
-import handler from "./socket";
+// @ts-ignore
+import registerSocketHandlers from "./socket.ts";
 
 dotenv.config();
 
 // node.js
 const port = 8000;
 
-const app = new Koa();
-app.use((ctx: Context) => {
-    ctx.body = process.env.OPENAI_API_KEY;
-})
-app.listen(port, () => {
+const app = express();
+
+app.use(cors({ origin: "http://localhost:3000", credentials: true}));
+
+// socket.io
+const server = http.createServer(app);
+
+const io = new Server(server, { cors: {
+        origin: "http://localhost:3000",
+        methods: ["GET", "POST"],
+        allowedHeaders: ["my-custom-header"],
+        credentials: true
+    }
+});
+
+registerSocketHandlers(io);
+
+server.listen(port, () => {
     console.log(`listening to port ${port}`);
 })
 
-// socket.io
-const server = http.createServer(app.callback());
-const io = new Server(server, { cors: {origin: "*"}});
-
-io.on("connection", handler);
