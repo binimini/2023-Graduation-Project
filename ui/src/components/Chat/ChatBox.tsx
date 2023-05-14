@@ -28,16 +28,22 @@ const ChatBox = () => {
   useEffect(()=> {
     const sock = io("ws://localhost:8000", {
       withCredentials: true,
-      extraHeaders: {
-        "my-custom-header": "abcd"
-      }
+      extraHeaders: { "my-custom-header": "abcd"}
     });
     sock.emit('join', userInfo.workspaceId);
-    sock.on('progress', (response) => {console.log(response)});
+    sock.on('progress', ({role, id, text}) => {
+      setChatList((prev) => [
+          ...prev.filter((value) => !(value.username=='ChatGPT'&&value.userId==id)),
+          { userId: id, username:'ChatGPT', content: text, mine: false }
+        ]);
+    });
 
-    // socket.emit('feedback', userInfo.workspaceId, "code content");
     setSocket(sock);
   }, [])
+
+  // const onClick = () => {
+  //   socket.emit('feedback', userInfo.workspaceId, "code content");
+  // }
 
   const sendChat = () => {
     stompClient.send(
