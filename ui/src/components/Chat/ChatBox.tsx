@@ -7,6 +7,7 @@ import { userInfoState } from "@/store/userInfoState";
 import { useRecoilState } from "recoil";
 import { WebSocketContext } from "@/context/WebSocketContext";
 import { io } from "socket.io-client";
+import {toastMsgState} from "@/store/toastMsgState";
 
 interface ChatPropType {
   userId: string;
@@ -18,11 +19,14 @@ interface ChatPropType {
 const ChatBox = () => {
   const [chatContent, setChatContent] = useState<string>("");
   const [userInfo, setUserInfo] = useRecoilState(userInfoState);
+  const [, setToastObj] = useRecoilState(toastMsgState);
   const stompClient = useContext(WebSocketContext);
   const [chatList, setChatList] = useState<ChatPropType[]>([]);
   const scrollRef = useRef<HTMLDivElement | undefined>(null);
   const [editDone, setEditDone] = useState<boolean>(false);
   const [socket, setSocket] = useState<any>(null);
+  const [joining, setJoining] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
 
 
   useEffect(()=> {
@@ -30,13 +34,23 @@ const ChatBox = () => {
       withCredentials: true,
       extraHeaders: { "my-custom-header": "abcd"}
     });
-    sock.emit('join', userInfo.workspaceId);
+    // join response
+    sock.on('join', () => {
+      setJoining(false);
+      console.log("joined!!!")
+    });
+    // partial answer
     sock.on('progress', ({role, id, text}) => {
       setChatList((prev) => [
           ...prev.filter((value) => !(value.username=='ChatGPT'&&value.userId==id)),
           { userId: id, username:'ChatGPT', content: text, mine: false }
         ]);
     });
+    // complete answer
+    sock.on('answer', () => setLoading(false));
+
+    // join request
+    setTimeout(()=>{sock.emit('join', userInfo.workspaceId);}, 1000)
 
     setSocket(sock);
   }, [])
@@ -51,7 +65,16 @@ const ChatBox = () => {
       JSON.stringify({ userId: userInfo.userId, content: chatContent })
     );
     if (chatContent.includes("@chatgpt")) {
+      if (joining) {
+        setToastObj({show:true, msg:'ChatGPT와 연동하는 중입니다. 잠시 기다려주세요.'})
+        return;
+      }
+      if (loading) {
+        setToastObj({show:true, msg:'ChatGPT가 대답하는 중입니다. 한 번에 한 질문만 해주세요!'})
+        return;
+      }
       socket.emit('question', userInfo.workspaceId, chatContent);
+      setLoading(true);
     }
   };
 
@@ -80,6 +103,8 @@ const ChatBox = () => {
     <>
       <LabelTab label="채팅" />
       <MainDiv>
+        { joining ? <BubbleDiv>ChatGPT가 연동되는 중입니다. {Spinner} </BubbleDiv> :
+            loading ? <BubbleDiv> ChatGPT가 답변을 작성 중입니다. {Spinner} </BubbleDiv> : null  }
         <ChatList ref={scrollRef}>
           {chatList.map((chat: ChatPropType) => {
             return (
@@ -94,9 +119,9 @@ const ChatBox = () => {
           })}
         </ChatList>
         <InputChatBox
-          placeholder="채팅을 입력해주세요."
-          setInput={setChatContent}
-          enterHandler={sendChat}
+            placeholder="채팅을 입력해주세요."
+            setInput={setChatContent}
+            enterHandler={sendChat}
         />
       </MainDiv>
     </>
@@ -104,6 +129,15 @@ const ChatBox = () => {
 };
 
 export default ChatBox;
+
+const BubbleDiv = tw.div`
+    w-[full] h-fit min-h-[25px]
+    bg-neutral 
+    rounded-[5px]
+    px-[8px] py-[5px]
+    text-[10px]
+    break-words
+`;
 
 // const MainDiv = tw.div`
 // w-full h-[calc(100%-32px)]
@@ -113,6 +147,12 @@ export default ChatBox;
 // overflow-x-hidden overflow-y-scroll
 // p-[10px]
 // `;
+
+const Spinner =
+  <div className="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" role="status">
+    <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+  </div>;
+
 const MainDiv = tw.div`
 w-full h-[calc(100%-32px)] 
 overflow-h-auto
@@ -122,7 +162,7 @@ p-[10px]
 `;
 
 const ChatList = tw.div`
-w-full h-[calc(100%-32px)] 
+w-full h-[calc(100%-50px)] 
 overflow-h-auto
 p-[10px]
 overflow-x-hidden overflow-y-scroll

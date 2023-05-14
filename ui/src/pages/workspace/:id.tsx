@@ -83,7 +83,7 @@ const Workspace = () => {
             </UserInfoDiv>
             {/* 테스트 케이스 */}
             <TestCasaeDiv>
-              <TestCaseList />
+              <ChatBox />
             </TestCasaeDiv>
             {/* 아래 버튼 3개 */}
             <UtilButtonsDiv>
@@ -119,7 +119,7 @@ const Workspace = () => {
               <CamList />
             </CamDiv>
             <ChatDiv>
-              <ChatBox />
+              <TestCaseList />
             </ChatDiv>
           </FlexDiv2>
         </MainDiv>

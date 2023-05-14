@@ -25,6 +25,7 @@ const registerSocketHandlers = (io : Server) => {
                 rooms[room] = await init();
             }
             console.log(`socket ${socket.id} joined room ${room}.`);
+            io.emit('join');
         });
 
         socket.on('question', async (room: string, text: string) => {
@@ -34,6 +35,7 @@ const registerSocketHandlers = (io : Server) => {
             };
             const response = await ask(room, rooms[room], text, handleProgress);
             rooms[room].parentMessageId = response.id;
+            io.to(room).emit('answer');
         });
 
         socket.on('feedback', async (room: string, code: string) => {
