@@ -1,0 +1,130 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css");
+@import url(codeMirror.scss);
+
+// 색상 변수
+$point-color: #00adb5;
+$darker-color: #1b2128;
+$base-color: #222831;
+$bg-color: #393e46;
+$text-color: #eeeeee;
+
+html {
+  @apply h-full min-h-[700px] w-full min-w-full overflow-auto;
+  font-family: "Pretendard";
+}
+
+body {
+  @apply h-full w-full;
+}
+
+#root {
+  @apply h-full w-full;
+}
+
+input,
+textarea {
+  &:focus,
+  &:active {
+    outline: unset !important;
+  }
+}
+
+textarea {
+  resize: none;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.dark-1 {
+  background-color: $darker-color;
+}
+
+.dark-2 {
+  background-color: $base-color;
+}
+
+.dark-3 {
+  background-color: $bg-color;
+}
+
+// .tab-active {
+//   background-color: $base-color !important;
+//   &::before,
+//   &::after {
+//     background-image: unset !important;
+//   }
+// }
+
+// .tab:not(.tab-active) {
+//   border: 1px solid $base-color;
+// }
+
+button.accent {
+  @apply my-auto w-fit rounded-[10px]
+bg-accent p-2 text-center
+text-sm font-bold text-neutral;
+}
+
+button:hover {
+  filter: brightness(80%);
+  transition: 0.2s;
+  > svg {
+    filter: brightness(80%);
+    transition: inherit;
+  }
+}
+
+button.styled {
+  position: relative;
+  background-color: $point-color;
+  color: $text-color;
+  font-weight: 600;
+  padding: 10px 18px;
+  border-radius: 14px;
+  z-index: 1;
+  &:before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0%;
+    height: 100%;
+    background-color: darken($point-color, 5%);
+    transition: all 0.2s;
+    border-radius: 14px;
+    z-index: -1;
+  }
+  &:hover {
+    color: #fff;
+    &:before {
+      width: 100%;
+    }
+  }
+}
+
+.tooltip {
+  &::before {
+    z-index: 100;
+  }
+}
+
+#home-lottie-player {
+  a {
+    display: none;
+  }
+}
+
+.tab-lifted.tab-active {
+  &:before,
+  &:after {
+    border: none;
+    background-image: none;
+  }
+}

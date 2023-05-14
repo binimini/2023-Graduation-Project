@@ -1,0 +1,352 @@
+/*
+ * abbott.css
+ * A warm, dark theme for prose and code, with pastels and pretty greens.
+ *
+ * Ported from abbott.vim (https://github.com/bcat/abbott.vim) version 2.1.
+ * Original design and CodeMirror port by Jonathan Rascher.
+ *
+ * This theme shares the following color palette with the Vim color scheme.
+ *
+ * Brown shades:
+ *   bistre: #231c14
+ *   chocolate: #3c3022
+ *   cocoa: #745d42
+ *   vanilla_cream: #fef3b4
+ *
+ * Red shades:
+ *   crimson: #d80450
+ *   cinnabar: #f63f05
+ *
+ * Green shades:
+ *   dark_olive: #273900
+ *   forest_green: #24a507
+ *   chartreuse: #a0ea00
+ *   pastel_chartreuse: #d8ff84
+ *
+ * Yellow shades:
+ *   marigold: #fbb32f
+ *   lemon_meringue: #fbec5d
+ *
+ * Blue shades:
+ *   cornflower_blue: #3f91f1
+ *   periwinkle_blue: #8ccdf0
+ *
+ * Magenta shades:
+ *   french_pink: #ec6c99
+ *   lavender: #e6a2f3
+ *
+ * Cyan shades:
+ *   zomp: #39a78d
+ *   seafoam_green: #00ff7f
+ */
+
+/* Style the UI: */
+
+/* Equivalent to Vim's Normal group. */
+
+.cm-s-abbott {
+  background: #231c14;
+  color: #d8ff84;
+
+  .CodeMirror-gutters {
+    background: #231c14;
+    border: none;
+  }
+
+  .CodeMirror-linenumber {
+    color: #fbec5d;
+  }
+
+  .CodeMirror-guttermarker {
+    color: #f63f05;
+  }
+
+  .CodeMirror-guttermarker-subtle {
+    color: #fbb32f;
+  }
+
+  .CodeMirror-ruler {
+    border-color: #745d42;
+  }
+
+  .CodeMirror-cursor {
+    border-color: #a0ea00;
+  }
+
+  &.cm-fat-cursor .CodeMirror-cursor,
+  .cm-animate-fat-cursor {
+    /*
+     * CodeMirror doesn't allow changing the foreground color of the character
+     * under the cursor, so we can't use a reverse video effect for the cursor.
+     * Instead, make it semitransparent.
+     */
+    background: rgba(160, 234, 0, 0.5);
+  }
+
+  &.cm-fat-cursor .CodeMirror-cursors {
+    /*
+     * Boost the z-index so the fat cursor shows up on top of text and
+     * matchingbracket/matchingtag highlights.
+     */
+    z-index: 3;
+  }
+
+  .CodeMirror-overwrite .CodeMirror-cursor {
+    border-bottom: 1px solid #a0ea00;
+    border-left: none;
+    width: auto;
+  }
+
+  .CodeMirror-secondarycursor {
+    border-color: #00ff7f;
+  }
+
+  .CodeMirror-selected,
+  &.CodeMirror-focused .CodeMirror-selected {
+    background: #273900;
+  }
+
+  .CodeMirror-line {
+    &::selection {
+      background: #273900;
+    }
+
+    > span {
+      &::selection,
+      > span::selection {
+        background: #273900;
+      }
+    }
+
+    &::-moz-selection {
+      background: #273900;
+    }
+
+    > span {
+      &::-moz-selection,
+      > span::-moz-selection {
+        background: #273900;
+      }
+    }
+  }
+
+  .cm-tab {
+    color: #00ff7f;
+  }
+
+  .cm-searching {
+    background: #fef3b4 !important;
+    color: #231c14 !important;
+  }
+
+  span {
+    &.cm-comment {
+      color: #fbb32f;
+      font-style: italic;
+    }
+
+    &.cm-string,
+    &.cm-string-2 {
+      color: #e6a2f3;
+    }
+
+    &.cm-number,
+    &.cm-string.cm-url {
+      color: #f63f05;
+    }
+
+    &.cm-invalidchar {
+      color: #00ff7f;
+    }
+
+    &.cm-atom,
+    &.cm-bracket,
+    &.cm-punctuation {
+      color: #fef3b4;
+    }
+
+    &.cm-operator {
+      font-weight: bold;
+    }
+
+    &.cm-def,
+    &.cm-variable,
+    &.cm-variable-2,
+    &.cm-variable-3 {
+      color: #8ccdf0;
+    }
+
+    &.cm-builtin,
+    &.cm-property,
+    &.cm-qualifier {
+      color: #3f91f1;
+    }
+
+    &.cm-type {
+      color: #24a507;
+    }
+
+    &.cm-keyword {
+      color: #d80450;
+      font-weight: bold;
+    }
+
+    &.cm-meta {
+      color: #ec6c99;
+    }
+
+    &.cm-tag {
+      color: #d80450;
+      font-weight: bold;
+    }
+
+    &.cm-attribute {
+      color: #24a507;
+    }
+
+    &.cm-header {
+      color: #d80450;
+      font-weight: bold;
+    }
+
+    &.cm-hr {
+      color: #ec6c99;
+    }
+
+    &.cm-link {
+      color: #e6a2f3;
+    }
+
+    &.cm-negative {
+      background: #d80450;
+      color: #231c14;
+    }
+
+    &.cm-positive {
+      background: #a0ea00;
+      color: #231c14;
+      font-weight: bold;
+    }
+
+    &.cm-error {
+      background: #d80450;
+      color: #231c14;
+    }
+
+    &.CodeMirror-matchingbracket {
+      background: #745d42 !important;
+      color: #231c14 !important;
+      font-weight: bold;
+    }
+
+    &.CodeMirror-nonmatchingbracket {
+      background: #d80450 !important;
+      color: #231c14 !important;
+    }
+  }
+
+  .CodeMirror-matchingtag,
+  .cm-matchhighlight {
+    outline: 1px solid #39a78d;
+  }
+
+  .CodeMirror-activeline-background {
+    background: #3c3022;
+  }
+
+  .CodeMirror-activeline-gutter {
+    background: #3c3022;
+
+    .CodeMirror-linenumber {
+      color: #d8ff84;
+      font-weight: bold;
+    }
+  }
+
+  .CodeMirror-foldmarker {
+    color: #f63f05;
+    text-shadow: none;
+  }
+}
+
+/* Roughly equivalent to Vim's LineNr group. */
+
+/* Roughly equivalent to Vim's FoldColumn group. */
+
+/*
+ * Roughly equivalent to Vim's CursorColumn group. (We use a brighter color
+ * since Vim's cursorcolumn option highlights a whole column, whereas
+ * CodeMirror's rule just highlights a thin line.)
+ */
+
+/* Equivalent to Vim's Cursor group in insert mode. */
+
+/* Equivalent to Vim's Cursor group in normal mode. */
+
+/* Equivalent to Vim's Cursor group in replace mode. */
+
+/* Roughly equivalent to Vim's CursorIM group. */
+
+/* Roughly equivalent to Vim's Visual group. */
+
+/* Roughly equivalent to Vim's SpecialKey group. */
+
+/* Equivalent to Vim's Search group. */
+
+/* Style syntax highlighting modes: */
+
+/* Equivalent to Vim's Comment group. */
+
+/* Equivalent to Vim's String group. */
+
+/* Equivalent to Vim's Constant group. */
+
+/* Roughly equivalent to Vim's SpecialKey group. */
+
+/* Equivalent to Vim's Special group. */
+
+/* Equivalent to Vim's Delimiter group. */
+
+/* Equivalent Vim's Operator group. */
+
+/* Roughly equivalent to Vim's Identifier group. */
+
+/* Roughly equivalent to Vim's Function group. */
+
+/* Equivalent to Vim's Type group. */
+
+/* Equivalent to Vim's Keyword group. */
+
+/* Equivalent to Vim's PreProc group. */
+
+/* Equivalent to Vim's htmlTagName group (linked to Statement). */
+
+/* Equivalent to Vim's htmlArg group (linked to Type). */
+
+/* Equivalent to Vim's htmlH1, markdownH1, etc. groups (linked to Title). */
+
+/* Equivalent to Vim's markdownRule group (linked to PreProc). */
+
+/* Roughly equivalent to Vim's Underlined group. */
+
+/* Equivalent to Vim's diffRemoved group. */
+
+/* Equivalent to Vim's diffAdded group. */
+
+/* Equivalent to Vim's Error group. */
+
+/* Style addons: */
+
+/* Equivalent to Vim's MatchParen group. */
+
+/*
+ * Roughly equivalent to Vim's Error group. (Vim doesn't seem to have a direct
+ * equivalent in its own matchparen plugin, but many syntax highlighting plugins
+ * mark mismatched brackets as Error.)
+ */
+
+/* Equivalent to Vim's CursorLine group. */
+
+/* Equivalent to Vim's CursorLineNr group. */
+
+/* Roughly equivalent to Vim's Folded group. */
