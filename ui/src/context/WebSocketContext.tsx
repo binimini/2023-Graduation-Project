@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { useRecoilValue } from "recoil";
 import Stomp, { Client } from "webstomp-client";
 
-const webSocketUrl = "ws://163.180.146.59/api/ws-connection";
+const webSocketUrl = "ws://localhost:8080/api/ws-connection";
 
 const WebSocketContext = React.createContext<any>(
   Stomp.over(new WebSocket(webSocketUrl), { debug: false })

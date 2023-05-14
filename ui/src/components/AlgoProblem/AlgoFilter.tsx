@@ -26,7 +26,7 @@ const AlgoFilterContainer = () => {
     console.log(url);
 
     axios
-      .get("http://163.180.146.59" + url)
+      .get("http://localhost:8080" + url)
       .then((res) => {
         const { data } = res;
 

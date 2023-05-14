@@ -10,7 +10,7 @@ const SignalingConnect = () => {
 
   const getDummy = () => {
     axios
-      .get("http://163.180.146.59/api/dummy")
+      .get("http://localhost:8080/api/dummy")
       .then((res) => {
         const { data } = res;
         setUserId(data.users[0].id);
@@ -29,7 +29,7 @@ const SignalingConnect = () => {
     if (stompClient === null) {
       setStompClient(
         // TODO: 추후 sockJS로 생성하기
-        Stomp.over(new WebSocket("ws://163.180.146.59/api/ws-connection"), {
+        Stomp.over(new WebSocket("ws://localhost:8080/api/ws-connection"), {
           debug: true,
         })
       );

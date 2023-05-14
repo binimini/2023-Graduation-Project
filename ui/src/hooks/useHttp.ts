@@ -40,7 +40,7 @@ const useHttp = (
     async (data) => {
       setIsLoading(true);
       setError(null);
-      const url = "http://163.180.146.59" + requestConfig.url;
+      const url = "http://localhost:8080" + requestConfig.url;
 
       try {
         requestFunc(url, data).then((res: any) => {

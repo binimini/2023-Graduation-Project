@@ -6,6 +6,7 @@ import { InputChatBox } from "../_styled/Input";
 import { userInfoState } from "@/store/userInfoState";
 import { useRecoilState } from "recoil";
 import { WebSocketContext } from "@/context/WebSocketContext";
+import { io } from "socket.io-client";
 
 interface ChatPropType {
   userId: string;
@@ -21,12 +22,31 @@ const ChatBox = () => {
   const [chatList, setChatList] = useState<ChatPropType[]>([]);
   const scrollRef = useRef<HTMLDivElement | undefined>(null);
   const [editDone, setEditDone] = useState<boolean>(false);
+  const [socket, setSocket] = useState<any>(null);
+
+
+  useEffect(()=> {
+    const sock = io("ws://localhost:8000", {
+      withCredentials: true,
+      extraHeaders: {
+        "my-custom-header": "abcd"
+      }
+    });
+    sock.emit('join', userInfo.workspaceId);
+    sock.on('progress', (response) => {console.log(response)});
+
+    // socket.emit('feedback', userInfo.workspaceId, "code content");
+    setSocket(sock);
+  }, [])
 
   const sendChat = () => {
     stompClient.send(
       `/pub/video/chat/${userInfo.workspaceId}`,
       JSON.stringify({ userId: userInfo.userId, content: chatContent })
     );
+    if (chatContent.includes("@chatgpt")) {
+      socket.emit('question', userInfo.workspaceId, chatContent);
+    }
   };
 
   useEffect(() => {
