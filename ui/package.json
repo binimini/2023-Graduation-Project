@@ -26,6 +26,7 @@
     "react-router-dom": "^6.4.2",
     "recoil": "^0.7.5",
     "sass": "^1.55.0",
+    "socket.io-client": "^4.6.1",
     "styled-components": "^5.3.6",
     "webstomp-client": "^1.2.6"
   },
@@ -41,5 +42,5 @@
     "vitawind": "^2.2.4",
     "vite": "^2.7.2"
   },
-  "proxy": "http://163.180.146.59:21"
+  "proxy": "http://localhost:21"
 }
