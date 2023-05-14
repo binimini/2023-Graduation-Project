@@ -47,6 +47,7 @@ public class VideoRoomController {
 
   @MessageMapping("/video/chat/{roomId}")
   public void chat(@DestinationVariable final String roomId, JSONObject ob) {
+    System.out.println("??????????/**/");
     log.info("/rooms/chat/"+roomId+" userId:  "+ob.get("userId"));
     log.info("/rooms/chat/"+roomId+" content: "+ob.get("content"));
     MessageRequest request = new MessageRequest(UUID.fromString((String) ob.get("userId")), (String)ob.get("content"));
