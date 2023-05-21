@@ -61,8 +61,12 @@ public class ProblemController {
     }
 
     @GetMapping("/random")
-    public List<ProblemDto.AllResponse> getProblems(@RequestParam("standard") String standard, @RequestParam("id") UUID id) {
-        return problemDtoMapper.toAllResponseList(problemService.getProblemsByStandard(standard, id));
+    public List<ProblemDto.AllResponse> getProblems(@RequestParam("standard") String standard,
+                                                    @RequestParam(required = false) UUID level,
+                                                    @RequestParam(required=false) Integer category) {
+        if (standard.equals("level")) return problemDtoMapper.toAllResponseList(problemService.getProblemsByLevelStandard(level));
+        else if (standard.equals("category")) return problemDtoMapper.toAllResponseList(problemService.getProblemsByCategoryStandard(category));
+        else throw new IllegalArgumentException();
     }
 
     @GetMapping("")

@@ -66,7 +66,7 @@ const Workspace = () => {
         <MainDiv>
           {/* Section 1 */}
           <AlgoDiv>
-            <AlgoFilterDiv>
+            <AlgoFilterDiv className="w-[23vw]">
               <AlgoFilterContainer />
             </AlgoFilterDiv>
             <AlgoInfoDiv>

@@ -47,6 +47,10 @@ const ChatBox = () => {
     socketIOClient.on('feedback', ()=>{
       console.log('feedback!');setLoading(true)
     });
+    socketIOClient.on('error', ()=> {
+      setToastObj({show:true, msg:'ChatGPT와 통신 중 에러가 발생했습니다. 다시 시도해주세요.'})
+      return;
+    })
     // join request
     setTimeout(()=>{socketIOClient.emit('join', userInfo.workspaceId);}, 1000)
   }, [])

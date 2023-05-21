@@ -4,13 +4,14 @@ import React, { useState } from "react";
 import { useRecoilValue } from "recoil";
 import tw from "tailwind-styled-components";
 import { IconButton } from "@/components/_styled/Buttons";
+import {IAlgoProbCategory} from "@/interface/IAlgoProbLevel";
 
 const AlgoInfo = () => {
   const algoProblem = useRecoilValue(algoProbListState);
   const [probIndex, setProbIndex] = useState(0);
 
   return (
-    <MainDiv>
+    <MainDiv className="w-full">
       {algoProblem.error ? (
         <TempDiv>
           <i className="fa-solid fa-triangle-exclamation"></i>
@@ -55,6 +56,13 @@ const AlgoInfo = () => {
             <RestraintHolder>
               {algoProblem.list[probIndex].level?.name}
             </RestraintHolder>
+          </RestraintDiv>
+          <RestraintDiv>
+            <div> 카테고리 </div>
+            <div className="flex flew-row whitespace-nowrap overflow-x-auto">
+              {(algoProblem.list[probIndex].categories as IAlgoProbCategory[])
+                  .map(category => <div className="bright-1 rounded-[3px] text-dark mx-1 w-fit">{category.name}</div>)}
+            </div>
           </RestraintDiv>
           <TitleDiv>· 문제</TitleDiv>
           <ContentP>{algoProblem.list[probIndex].description}</ContentP>

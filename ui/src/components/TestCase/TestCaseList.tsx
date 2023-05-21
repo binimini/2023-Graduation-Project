@@ -11,6 +11,7 @@ import { userInfoState } from "@/store/userInfoState";
 const TestCaseList = () => {
   const [testCases, setTestCases] = useRecoilState(testCaseState);
   const [isAdding, setIsAdding] = useState(false);
+  const [subscribe, setSubscribe] = useState<{createId:string, deleteId:string}>();
   const [testCaseResultList, setTestCaseResultList] =
     useRecoilState(testCaseResultState);
 
@@ -29,32 +30,33 @@ const TestCaseList = () => {
 
   useEffect(() => {
     if (stompClient.connected) {
-      stompClient.subscribe(
+
+      if (subscribe != undefined) {
+          stompClient.unsubscribe(subscribe.createId);
+          stompClient.unsubscribe(subscribe.deleteId);
+      }
+
+      const createId = stompClient.subscribe(
         `/sub/testcases/create/${userInfo.workspaceId}`,
         async (res: any) => {
           const data = await JSON.parse(res.body);
-          
-          const newList = [...testCases, data];
-
-          setTestCases(newList)
+          setTestCases((prev) => [...prev.filter((e) => e.testCaseId != data.testCaseId), data])
         }
-      );
+      ).id;
 
-      stompClient.subscribe(
+      const deleteId = stompClient.subscribe(
         `/sub/testcases/delete/${userInfo.workspaceId}`,
         async (res: any) => {
           const data = await JSON.parse(res.body);
-          const newList = testCases.filter(
-            (e) => e.testCaseId != data.testCaseId
-          );
-          setTestCases(newList);
+            setTestCases((prev) => [...prev.filter((e) => e.testCaseId != data.testCaseId), data])
         }
-      );
+      ).id;
+
+      setSubscribe({createId, deleteId});
     }
   }, [stompClient.connected, testCases]);
 
   useEffect(() => {
-    setTestCaseResultList([]);
     console.log("watching", testCases);
   }, [testCases]);
 
@@ -76,9 +78,7 @@ const TestCaseList = () => {
         )}
         {sortedTestCases.map((e, idx) => {
           const compileResult =
-            testCaseResultList?.[
-              testCaseResultList?.length - idx - 1
-            ] || null;
+            testCaseResultList.filter(result => result.testCaseId == e.testCaseId)[0];
           return (
             <TestCase
               key={sortedTestCases.length - idx}

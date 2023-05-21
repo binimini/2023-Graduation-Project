@@ -19,5 +19,5 @@ export interface IAlgoProbInfo {
     id: string;
     name: string;
   };
-  categories: Array<IAlgoProbCategory>;
+  categories: string  | IAlgoProbCategory[];
 }
