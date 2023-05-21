@@ -4,10 +4,12 @@ import tw from "tailwind-styled-components";
 import SelectBox from "@/components/_styled/Select";
 import InputBox from "@/components/_styled/Input";
 import Tabs from "@/components/_styled/Tabs";
-import { algoProbListState, algoProbLevelState } from "@/store/algoProbState";
+import {algoProbListState, algoProbLevelState, algoProbCategoryState} from "@/store/algoProbState";
 import axios from "axios";
 import { cursorTo } from "readline";
 import {toastMsgState} from "@/store/toastMsgState";
+import {IAlgoProbInfo} from "@/interface/IAlgoProbLevel";
+import * as process from "process";
 
 interface UserInfo {
     userId: string
@@ -17,23 +19,37 @@ interface UserInfo {
         name: string
     }
 }
+
 const AlgoFilterContainer = () => {
     // 0 : 사용자 정보, 1 : 알고리즘 필터, 2 : 알고리즘 검색
   const [tabNum, setTabNum] = useState(0);
   const [algoProbLevelList] = useRecoilState(algoProbLevelState);
+  const [algoProbCategoryList] = useRecoilState(algoProbCategoryState);
   const [, setAlgoProblemList] = useRecoilState(algoProbListState);
   const [, setToastObj] = useRecoilState(toastMsgState);
   const [levelFilter, setLevelFilter] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
   const [problemNum, setProblemNum] = useState("");
   const [accountId, setAccountId] = useState("");
   const [userInfo, setUserInfo] = useState<UserInfo>();
 
-  console.log(userInfo)
+
+    const transformAlgoProbList = ({ list, length, error }: { list: IAlgoProbInfo[], length: number, error:boolean }) => {
+        const newList = list.map((prob) => {
+            prob.categories = (prob.categories as string)
+                .split(";,")
+                .map(category => category.replaceAll(/;| |,|\[|\]/g,""))
+                .map((categoryId: string) => algoProbCategoryList.list.filter(category => category.id == categoryId)[0]);
+            return prob
+        })
+        setAlgoProblemList({ list: newList, length: length, error: error })
+    }
   const onSearch = () => {
     const url =
       tabNum == 0
         ? `/api/problems/user/${accountId}` :
-          tabNum==1 ? `/api/problems/random?standard=level&id=${levelFilter}` : `/api/problems?number=${problemNum}`;
+          tabNum==1 ? `/api/problems/random?standard=level&level=${levelFilter}` :
+              tabNum==2 ? `/api/problems/random?standard=category&category=${categoryFilter}` : `/api/problems?number=${problemNum}`;
 
     if (tabNum == 0 && accountId=="") {
         setToastObj({show:true, msg: '사용자 아이디를 정확히 입력해주세요!'})
@@ -49,20 +65,20 @@ const AlgoFilterContainer = () => {
             if (tabNum==0) {
                 setUserInfo({});
             }
-            else setAlgoProblemList({ list: [], length: 0, error: true });
+            else transformAlgoProbList({ list: [], length: 0, error: true });
           return;
         }
         tabNum == 0
-            ? setUserInfo(data) : tabNum == 1
-            ? setAlgoProblemList({
+            ? setUserInfo(data) : tabNum !=3
+            ? transformAlgoProbList({
               list: data,
               length: data.length,
               error: false,
             })
-          : setAlgoProblemList({ list: [data], length: 1, error: false });
+          : transformAlgoProbList({ list: [data], length: 1, error: false });
       })
       .catch((e) => {
-        setAlgoProblemList({ list: [], length: 0, error: true });
+          transformAlgoProbList({ list: [], length: 0, error: true });
       });
   };
 
@@ -70,7 +86,7 @@ const AlgoFilterContainer = () => {
   return (
     <>
       <Tabs
-        list={["사용자정보","필터검색", "번호검색"]}
+        list={["사용자정보","티어검색","카테고리검색","번호검색"]}
         tabNum={tabNum}
         setTabNum={setTabNum}
       />
@@ -101,21 +117,23 @@ const AlgoFilterContainer = () => {
                 </div>
             </div>) :
             tabNum == 1 ? (
-          <div className="flex justify-start">
+          <div className="flex justify-start w-full">
             <SelectBox
               options={algoProbLevelList.list}
               placeholder="티어를 선택하세요"
               label="티어"
               setSelection={setLevelFilter}
             />
-            <SelectBox
-              placeholder="준비중인 기능입니다"
-              label="유형"
-              disabled={true}
-              setSelection={() => {}}
-            />
           </div>
-        ) : (
+        ) :
+        tabNum == 2 ? (<div className="flex justify-start w-full">
+            <SelectBox
+                options={algoProbCategoryList.list}
+                placeholder="카테고리를 선택하세요"
+                label="카테고리"
+                setSelection={setCategoryFilter}
+            />
+        </div>) : (
           <InputBox
             placeholder="문제 번호를 검색하세요"
             label="문제 번호"

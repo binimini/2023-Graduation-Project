@@ -54,6 +54,13 @@ input[type="number"]::-webkit-inner-spin-button {
   background-color: $bg-color;
 }
 
+.bright-1 {
+  background-color: darken($text-color, 5%);
+}
+
+.text-dark {
+  color: $darker-color;;
+}
 // .tab-active {
 //   background-color: $base-color !important;
 //   &::before,

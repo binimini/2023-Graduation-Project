@@ -33,15 +33,12 @@ public class ProblemService {
             // TODO : 해당하는 Problem 존재하지 않을 경우 예외 처리
     }
 
-    public List<Problem> getProblemsByStandard(String standard, UUID id) {
-        List<Problem> list = new ArrayList<>();
-        if (standard.equals("level")) {
-            list = problemRepository.findRandomByLevel(id, 5);
-        }
-        else {
-            // TODO : 존재하지않는 standard 예외 처리
-        }
-        return list;
+    public List<Problem> getProblemsByLevelStandard(UUID id) {
+        return problemRepository.findRandomByLevel(id, 5);
+    }
+
+    public List<Problem> getProblemsByCategoryStandard(Integer id) {
+        return problemRepository.findRandomByCategory(id, 5);
     }
 
     @Scheduled(cron = "0 0/20 * * * *")
