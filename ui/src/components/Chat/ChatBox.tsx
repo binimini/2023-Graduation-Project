@@ -5,9 +5,9 @@ import ChatBubble from "./ChatBubble";
 import { InputChatBox } from "../_styled/Input";
 import { userInfoState } from "@/store/userInfoState";
 import { useRecoilState } from "recoil";
-import { WebSocketContext } from "@/context/WebSocketContext";
-import { io } from "socket.io-client";
+import {WebSocketContext} from "@/context/WebSocketContext";
 import {toastMsgState} from "@/store/toastMsgState";
+import {SocketIOContext} from "@/context/SocketIOContext";
 
 interface ChatPropType {
   userId: string;
@@ -21,38 +21,34 @@ const ChatBox = () => {
   const [userInfo, setUserInfo] = useRecoilState(userInfoState);
   const [, setToastObj] = useRecoilState(toastMsgState);
   const stompClient = useContext(WebSocketContext);
+  const socketIOClient = useContext(SocketIOContext);
   const [chatList, setChatList] = useState<ChatPropType[]>([]);
   const scrollRef = useRef<HTMLDivElement | undefined>(null);
   const [editDone, setEditDone] = useState<boolean>(false);
-  const [socket, setSocket] = useState<any>(null);
   const [joining, setJoining] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
 
 
   useEffect(()=> {
-    const sock = io("ws://localhost:8000", {
-      withCredentials: true,
-      extraHeaders: { "my-custom-header": "abcd"}
-    });
     // join response
-    sock.on('join', () => {
-      setJoining(false);
-      console.log("joined!!!")
-    });
+    socketIOClient.on('join', () => setJoining(false));
+    // complete answer
+    socketIOClient.on('answer', () => setLoading(false));
     // partial answer
-    sock.on('progress', ({role, id, text}) => {
+    socketIOClient.on('progress', ({role, id, text}: {role: string, id: string, text:string}) => {
       setChatList((prev) => [
           ...prev.filter((value) => !(value.username=='ChatGPT'&&value.userId==id)),
           { userId: id, username:'ChatGPT', content: text, mine: false }
         ]);
     });
-    // complete answer
-    sock.on('answer', () => setLoading(false));
-
+    socketIOClient.on('question', ()=>{
+      console.log('question!');setLoading(true)
+    });
+    socketIOClient.on('feedback', ()=>{
+      console.log('feedback!');setLoading(true)
+    });
     // join request
-    setTimeout(()=>{sock.emit('join', userInfo.workspaceId);}, 1000)
-
-    setSocket(sock);
+    setTimeout(()=>{socketIOClient.emit('join', userInfo.workspaceId);}, 1000)
   }, [])
 
   // const onClick = () => {
@@ -73,8 +69,7 @@ const ChatBox = () => {
         setToastObj({show:true, msg:'ChatGPT가 대답하는 중입니다. 한 번에 한 질문만 해주세요!'})
         return;
       }
-      socket.emit('question', userInfo.workspaceId, chatContent);
-      setLoading(true);
+      socketIOClient.emit('question', userInfo.workspaceId, chatContent);
     }
   };
 

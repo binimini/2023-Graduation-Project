@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useContext, useState} from "react";
 import tw from "tailwind-styled-components";
 import MonacoEditor from "@monaco-editor/react";
 import CompileFloatBtn from "@/components/LiveCode/CompileBtn";
@@ -7,18 +7,25 @@ import useMonacoEditor from "@/hooks/Components/useMonacoEditor";
 import useCodeSnapshot from "@/hooks/Components/useCodeSnapshot";
 import SelectBox from "../_styled/Select";
 import useCompile from "@/hooks/Components/useCompile";
-import { EditorView } from "codemirror";
 import { useRecoilValue } from "recoil";
 import { userInfoState } from "@/store/userInfoState";
 import Tooltip from "@/components/_styled/Tooltip";
+import FeedbackFloadBtn from "@/components/LiveCode/FeedbackBtn";
+import {SocketIOContext} from "@/context/SocketIOContext";
+import {Socket} from "socket.io-client";
 
 const LiveCode = () => {
   const { onCompile } = useCompile();
   const [isEditable, setIsEditable] = useState(false);
   const userInfo = useRecoilValue(userInfoState);
-  const { monaco, monacoRef, setliveCodeSetter, handleEditorDidMount, handleEditorChange } =
-    useMonacoEditor();
+  const { monaco, monacoRef, setliveCodeSetter, handleEditorDidMount, handleEditorChange } = useMonacoEditor();
   const { onSnapshot } = useCodeSnapshot(monacoRef);
+  const socketIOClient = useContext<Socket>(SocketIOContext);
+
+  const onFeedback = () => {
+    const code = monacoRef.current?.getValue();
+    socketIOClient.emit('feedback', userInfo.workspaceId, code);
+  }
 
   return (
     <>
@@ -58,6 +65,7 @@ const LiveCode = () => {
       <FloatButtonDiv style={{ transform: "translate(-50%, 0)" }}>
         <CompileFloatBtn onClick={() => onCompile({ code: monacoRef.current.getValue() })} />
         <SnapshotFloatBtn onClick={onSnapshot} />
+        <FeedbackFloadBtn onClick={onFeedback} />
       </FloatButtonDiv>
     </>
   );

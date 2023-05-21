@@ -27,11 +27,11 @@ const ask = async (roomId:string, roomInfo: RoomInfo, text: string, handleProgre
 }
 
 const feedback = async (roomId:string, roomInfo: RoomInfo, code: string, handleProgress : any) => {
-    return await chatGPT.sendMessage(`이 코드가 더 나아질 수 있도록 대한 피드백 해줘. ${code}`, {
+    return await chatGPT.sendMessage(`이 코드가 더 나아질 수 있도록 피드백 해줘. ${code}`, {
         parentMessageId: roomInfo.parentMessageId,
         conversationId: roomInfo.conversationId,
         onProgress: ({role, id, text}) => handleProgress(roomId, role, id, text)
     });
 }
 
-export {init, ask}
+export {init, ask, feedback}
