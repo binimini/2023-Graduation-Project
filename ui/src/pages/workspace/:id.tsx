@@ -16,6 +16,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import CamList from "@/components/Cam/CamList";
 import Toast from "@/components/_styled/Toast";
 import WebSocketContext from "@/context/WebSocketContext";
+import SocketIOContext from "@/context/SocketIOContext";
 import { useRecoilState } from "recoil";
 import { userInfoState } from "@/store/userInfoState";
 import Tooltip from "@/components/_styled/Tooltip";
@@ -60,6 +61,7 @@ const Workspace = () => {
 
   return (
     <>
+      <SocketIOContext>
       <WebSocketContext>
         <MainDiv>
           {/* Section 1 */}
@@ -146,6 +148,7 @@ const Workspace = () => {
         </Modal>
         <Toast />
       </WebSocketContext>
+      </SocketIOContext>
     </>
   );
 };

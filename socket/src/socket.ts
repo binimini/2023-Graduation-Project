@@ -1,6 +1,6 @@
 import {Server} from "socket.io";
 // @ts-ignore
-import {ask, init} from "./chat-gpt.ts";
+import {ask, feedback, init} from "./chat-gpt.ts";
 
 interface Rooms {
     [key:string]: RoomInfo
@@ -30,6 +30,7 @@ const registerSocketHandlers = (io : Server) => {
 
         socket.on('question', async (room: string, text: string) => {
             if (rooms[room] == undefined) return;
+            io.to(room).emit('question');
             const handleProgress = (room:string, role:string, id:string, text:string) => {
                 io.to(room).emit('progress', { role, id, text })
             };
@@ -40,11 +41,13 @@ const registerSocketHandlers = (io : Server) => {
 
         socket.on('feedback', async (room: string, code: string) => {
             if (rooms[room] == undefined) return;
+            io.to(room).emit('feedback');
             const handleProgress = (room:string, role:string, id:string, text:string) => {
                 io.to(room).emit('progress', { role, id, text })
             };
-            const response = await ask(room, rooms[room], code, handleProgress);
+            const response = await feedback(room, rooms[room], code, handleProgress);
             rooms[room].parentMessageId = response.id;
+            io.to(room).emit('answer');
         });
 
         socket.on("disconnect", (reason) => {
