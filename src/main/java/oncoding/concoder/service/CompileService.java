@@ -1,34 +1,25 @@
 package oncoding.concoder.service;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import oncoding.concoder.dto.CompileDto;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import oncoding.concoder.dto.CompileDto;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class CompileService {
     public static final int THREAD_TIMEOUT_SECONDS = 5;
-
-    private final SimpMessagingTemplate template;
 
     public void writeFile(String name, String content) throws IOException {
         File file = new File(Paths.get(String.format("%s.py", name)).toString());
@@ -64,7 +55,6 @@ public class CompileService {
 
         String result = exitCode!=0 ? "failed" : "success";
         log.info("run " + result + " with exit code " + exitCode + " time: " + TimeUnit.MILLISECONDS.convert(time, TimeUnit.NANOSECONDS)+"ms");
-
         return new CompileDto.Response(testCaseId, sb.toString(),  TimeUnit.MILLISECONDS.convert(time, TimeUnit.NANOSECONDS));
     }
 
@@ -82,7 +72,7 @@ public class CompileService {
     }
 
     @Async("taskExecutor")
-    public void run(String roomId, String code, String input, String testCaseId) {
+    public CompletableFuture<CompileDto.Response> run(String roomId, String code, String input, String testCaseId) {
         log.info(Thread.currentThread().getName()+" thread run()...");
         String random = UUID.randomUUID().toString();
 
@@ -112,16 +102,13 @@ public class CompileService {
             InputStream stdout = exitCode!=0 ? process.getErrorStream() : process.getInputStream();
             BufferedReader br =  new BufferedReader(new InputStreamReader(stdout, StandardCharsets.UTF_8));
 
-            template.convertAndSend("/sub/compile/"+ roomId,
-                getOutput(br, exitCode, time, testCaseId));
+            return CompletableFuture.completedFuture(getOutput(br, exitCode, time, testCaseId));
         }
         catch (InterruptedException e) {
-            template.convertAndSend("/sub/compile/"+ roomId,
-                new CompileDto.Response(testCaseId, "[Error] timeout!", -1L));
+            return CompletableFuture.completedFuture(new CompileDto.Response(testCaseId, "[Error] timeout!", -1L));
         }
         catch (IOException e) {
-            template.convertAndSend("/sub/compile/"+ roomId,
-                new CompileDto.Response(testCaseId, "[Error] "+e.getMessage(), -1L));
+            return CompletableFuture.completedFuture(new CompileDto.Response(testCaseId, "[Error] "+e.getMessage(), -1L));
         }
         finally {
             deleteFile(random);
