@@ -14,9 +14,6 @@
     WebRTC와 WebSocket 을 이용한 실시간 알고리즘 화상 교육 웹 플랫폼
     <br />
     <br />
-    <a href="">데모 영상 보기(준비중)</a> ·
-    <a href="https://www.notion.so/1-a011870b9d85404f89beca26bec26033">설계 문서</a> ·
-    <a href="https://github.com/KHUCapston-concoder/Frontend">FRONTEND PROJECT</a>
   </p>
 </div>
 
@@ -29,14 +26,49 @@ ConCoder는 ConCurrency + Coder의 합성어로, "동시에 코딩하는 사람�
 ## Built With
 높은 품질과 안정성을 보장하는 알고리즘 화상 교육 웹 서비스를 구현하기 위해 기본적인 웹 프레임워크에 WebRTC , Web Socket 통신, Multi-Thread 처리 등 여러 기술을 더하여 본 서비스를 개발하였다. 
 
-##### FRONTEND
-[![React][React.js]][React-url]
+### 기능
+#### 메인 페이지
+<img width="1250" alt="메인화면" src="https://github.com/binimini/2023-Graduation-Project/assets/69030160/7f852346-5982-4109-ad05-3618798c29e4">
 
-##### BACKEND
-[![Spring][Spring]][Spring-url]
+#### 사용자 정보 연동
+✨ 사용자 아이디를 입력 받아 사이트의 사용자 정보와 연동한다.
+
+<img width="300" alt="사용자 정보 2" src="https://github.com/binimini/2023-Graduation-Project/assets/69030160/7342fb4b-c8e6-4ede-9e3a-dd71a598de2d">
+
+#### 문제 카테고리 정보 연동
+✨ 카테고리 목록 중 원하는 카테고리를 선택해 해당 카테고리 문제를 랜덤 추천 받을 수 있다.
+
+<img width="300" height="600" alt="카테고리 목록" src="https://github.com/binimini/2023-Graduation-Project/assets/69030160/6d866cae-741b-499a-b814-2bc0fd9f8183">
+
+<img width="300" height="600" alt="카테고리 문제 조회" src="https://github.com/binimini/2023-Graduation-Project/assets/69030160/eae1e767-2330-476e-a9cb-97d5a67fe7f5">
 
 
-## 기능
+#### 실시간 ChatGPT 연결
+✨ 실시간으로 질문해 답변받을 수 있도록 ChatGPT를 연결한다. 피드백 버튼으로 작성한 코드에 대해 피드백 받을 수 있다.
+
+<img width="700" alt="gpt 연동 중" src="https://github.com/binimini/2023-Graduation-Project/assets/69030160/b2e98b69-03e1-4988-aaa1-60cc640c2a07">
+
+<img width="700" alt="gpt 코드 피드백 시작" src="https://github.com/binimini/2023-Graduation-Project/assets/69030160/039c6f79-ce64-4560-921e-b733359a44f4">
+
+
+#### 문제 추천
+✨ 연동한 사용자 정보를 기반으로 적합한 문제를 추천받을 수 있다.
+
+<img width="300" height="600" alt="문제 추천" src="https://github.com/binimini/2023-Graduation-Project/assets/69030160/301d5484-44ca-4bc1-849e-30f32cb7fb4d">
+
+
+### Contact
+
+##### ❣️ FRONTEND
+민수빈 ✉️ tnqls5417@naver.com<br/>
+
+##### ❣️ BACKEND
+민수빈 ✉️ tnqls5417@naver.com<br/>
+
+
+## 기반 프로젝트 : Concoder
+
+### 기능
 #### 메인 페이지
 ✨ 가장 왼쪽의 섹터에서 백준에 있는 문제들의 정보를 열람할 수 있다. **필터 검색**과 **번호 검색**을 지원하며, 필터 검색은 DB에서 티어 기준으로 랜덤 추천해준다. <br/> 
 
@@ -60,7 +92,7 @@ ConCoder는 ConCurrency + Coder의 합성어로, "동시에 코딩하는 사람�
 #### 타이머
 <img width="1250" alt="KakaoTalk_Photo_2022-11-21-15-28-07 003" src="https://user-images.githubusercontent.com/72961728/202980441-6ac4ae5f-2c8c-414e-a337-a64d34a75659.png">
 
-## Contacts
+### Contact
 
 ##### ❣️ FRONTEND
 정지원 ✉️ wjdwl001@khu.ac.kr<br/>
