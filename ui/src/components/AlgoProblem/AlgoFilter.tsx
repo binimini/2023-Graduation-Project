@@ -100,7 +100,7 @@ const AlgoFilterContainer = () => {
                     setInput={setAccountId}
                 />
                 {userInfo==null ? null :
-                <div className="w-full h-[70%] flex flex-row justify-around mx-4">
+                <div className="w-full h-[52%] flex flex-row justify-around mx-4">
                     <img  className="w-[20%] h-fit text-xs font-bold" src={userInfo.profileImageUrl} alt="프로필"/>
                     <div className="w-[70%] h-auto">
                         <div className="text-xs font-bold flex flex-row h-[50%]">
@@ -110,6 +110,9 @@ const AlgoFilterContainer = () => {
                         <div className="text-xs font-bold flex flex-row h-[50%]">
                             <div className="w-[40%]">티어</div>
                             <div className="dark-1 w-[55%] text-center rounded-[10px] h-fit">{userInfo.level?.name ?? "None"}</div>
+                        </div>
+                        <div className="text-xs font-bold h-fit w-[80%] rounded-[10px] flex justify-center -my-1 dark-1 ">
+                            <button> 문제추천 </button>
                         </div>
                     </div>
                 </div>
