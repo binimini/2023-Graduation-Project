@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import oncoding.concoder.dto.ProblemDto;
 import oncoding.concoder.dto.ProblemDto.UserInfo;
 import oncoding.concoder.dto.ProblemDto.UserStruct;
@@ -19,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -120,19 +122,24 @@ public class CrawlingService {
 
         userTagInfo.forEach(tag -> {
             double score = (tag.getTotal() * 2  - tag.getSolved() * 2 - tag.getPartial() * 1) / (double) (tag.getTotal() * 2) * 10  +  (tag.getTotal() / (double) 900);
-            System.out.println(tag.getTag().getDisplayNames().get(0).getName() + " 유형 점수 " + score);
-            System.out.println("전체 해결 "+ tag.getSolved() + " / " + tag.getTotal());
-            System.out.println("부분 해결 "+ tag.getPartial() + " / " + tag.getTotal());
+            log.info(tag.getTag().getDisplayNames().get(0).getName() + " 유형 점수 " + score);
+            log.info("전체 해결 "+ tag.getSolved() + " / " + tag.getTotal());
+            log.info("부분 해결 "+ tag.getPartial() + " / " + tag.getTotal());
+            log.info("put " + tag.getTag().getBojTagId() + " " + score );
             sortedMap.put(tag.getTag().getBojTagId(), score);
         });
 
         Iterator<Map.Entry<Integer, Double>> iter = sortedMap.entrySet().iterator();
-        int rand = new Random(new Date().getTime()).nextInt(5);
-        System.out.println("random number : " + rand);
-        for (int i = 0; i < rand; i++) {
-            iter.next();
+        int rand = new Random(new Date().getTime()).nextInt(4) + 1;
+        log.info("random number : " + rand);
+        int i = 0;
+        int selected = 0;
+        while(iter.hasNext() && ++i <= rand) {
+            selected = iter.next().getKey();
+            log.info("next " + selected );
         }
-        return iter.next().getKey();
+        log.info("selected category number : " + selected);
+        return selected;
     }
 
 }

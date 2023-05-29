@@ -7,6 +7,7 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.Expressions;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import oncoding.concoder.model.Problem;
 import oncoding.concoder.model.QProblem;
@@ -45,17 +46,23 @@ public class ProblemCustomRepositoryImpl extends QuerydslRepositorySupport imple
     }
 
     @Override
-    public Problem findSimilarLevelByCategory(int id, int tier) {
+    public Optional<Problem> findSimilarLevelByCategory(int id, int tier) {
         final  QProblem problem = QProblem.problem;
 
-        return from(problem)
+        try {
+            System.out.println(tier);
+            return Optional.of(from(problem)
                 .where(problem.categories.contains("["+id+";").or(problem.categories.contains(", "+id+";")))
                 .leftJoin(problem.level, level)
                 .fetchJoin()
-                .where(problem.level.number.loe(tier))
+                .where(problem.level.number.loe(tier).and(problem.level.number.ne(0)))
                 .orderBy(problem.level.number.desc(), Expressions.numberTemplate(Double.class, "function('rand')").asc())
                 .limit(1)
                 .fetch()
-                .get(0);
+                .get(0));
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println("??");
+            return Optional.empty();
+        }
     }
 }

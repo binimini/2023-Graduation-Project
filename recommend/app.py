@@ -7,7 +7,7 @@ script_dir = os.path.dirname(__file__)
 rel_path = "./data.csv"
 data = pd.read_csv(os.path.join(script_dir, rel_path))
 
-data["features"] = data["categories"] + " " + data["level"]
+data["features"] = data["level"] + " " + data["categories"]
 
 tfidf = TfidfVectorizer()
 features_matrix = tfidf.fit_transform(data["features"])

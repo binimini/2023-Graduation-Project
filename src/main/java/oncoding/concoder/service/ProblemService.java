@@ -9,6 +9,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import oncoding.concoder.dto.ProblemDto;
 import oncoding.concoder.model.Category;
 import oncoding.concoder.model.Level;
@@ -18,6 +19,7 @@ import oncoding.concoder.repository.ProblemRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -42,9 +44,13 @@ public class ProblemService {
     }
 
     public int getProblemNumberByCategoryAndTier(int categoryNumber, Integer tier) {
-        // TODO : Non-tier user
-        // TODO : Not Found
-        return problemRepository.findSimilarLevelByCategory(categoryNumber, tier).getNumber();
+        log.info("user tier "+ (tier <= 5 ? tier+1 : tier));
+        tier = tier <= 5 ? tier + 2 : tier; // Bronze 구간일 경우 문제 범위 적으므로 범위 + 2 까지 확장
+        int finalTier = tier;
+        return problemRepository.findSimilarLevelByCategory(categoryNumber, tier <= 5 ? 5 : tier)
+                // 확장한 범위 내에서 추천된 카테고리 문제 없을 경우 해당 난이도 기반 랜덤 문제로 선정
+                .orElseGet(() -> problemRepository.findRandomByLevel(levelService.getLevelByNumber(finalTier).getId(), 1).get(0))
+                .getNumber();
     }
 
     @Scheduled(cron = "0 0/20 * * * *")

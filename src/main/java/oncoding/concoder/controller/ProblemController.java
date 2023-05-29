@@ -85,7 +85,6 @@ public class ProblemController {
        // select category based on user category solve history
        int categoryNumber = crawlingService.getUserWeakCategoryNumber(accountId);
 
-       System.out.println("선택된 카테고리 : " + categoryNumber);
        // select standard problem based on selected category, user level
        UserInfo userInfo = crawlingService.getUserInfo(accountId);
        int problemNumber =  problemService.getProblemNumberByCategoryAndTier(categoryNumber, userInfo.getTier());

@@ -39,6 +39,7 @@ public class RecommendService {
         List<String> outputs = new ArrayList<>();
         String line;
         while ((line = br.readLine()) != null) {
+            log.info(line);
             outputs.add(line);
         }
 
