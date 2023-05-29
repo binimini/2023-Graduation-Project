@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import React, {useEffect} from "react";
 import AlgoFilterContainer from "@/components/AlgoProblem/AlgoFilter";
 import AlgoInfo from "@/components/AlgoProblem/AlgoInfo";
 import TestCaseList from "@/components/TestCase/TestCaseList";
@@ -9,19 +9,17 @@ import ChatBox from "@/components/Chat/ChatBox";
 import Modal from "@/hoc/Portal";
 import useModal from "@/hooks/useModal";
 import SnapshotBtn from "@/components/Snapshot/PopupBtn";
-import TimerBtn from "@/components/Timer/PopupBtn";
-import { IconButton } from "@/components/_styled/Buttons";
+import {IconButton} from "@/components/_styled/Buttons";
 import tw from "tailwind-styled-components";
-import { useLocation, useNavigate } from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import CamList from "@/components/Cam/CamList";
 import Toast from "@/components/_styled/Toast";
 import WebSocketContext from "@/context/WebSocketContext";
 import SocketIOContext from "@/context/SocketIOContext";
-import { useRecoilState } from "recoil";
-import { userInfoState } from "@/store/userInfoState";
+import {useRecoilState} from "recoil";
+import {userInfoState} from "@/store/userInfoState";
 import Tooltip from "@/components/_styled/Tooltip";
-import { toastMsgState } from "@/store/toastMsgState";
-import React from "react";
+import {toastMsgState} from "@/store/toastMsgState";
 
 const Workspace = () => {
   const [sendRequestProbLevel, sendRequestProbCategory] = useFetchAlgoInfo();
@@ -65,8 +63,8 @@ const Workspace = () => {
       <WebSocketContext>
         <MainDiv>
           {/* Section 1 */}
-          <AlgoDiv>
-            <AlgoFilterDiv className="w-[23vw]">
+          <AlgoDiv className="w-[23vw]">
+            <AlgoFilterDiv>
               <AlgoFilterContainer />
             </AlgoFilterDiv>
             <AlgoInfoDiv>
@@ -97,11 +95,6 @@ const Workspace = () => {
               <Tooltip direction="top" tip="스냅샷">
                 <UtilButtonDiv>
                   <SnapshotBtn />
-                </UtilButtonDiv>
-              </Tooltip>
-              <Tooltip direction="top" tip="타이머">
-                <UtilButtonDiv>
-                  <TimerBtn />
                 </UtilButtonDiv>
               </Tooltip>
               <Tooltip direction="top" tip="나가기">
@@ -244,7 +237,7 @@ basis-auto
 const UtilButtonsDiv = tw(CommonDiv)`
 m-0 w-full
 min-h-[60px] h-[10%]
-flex gap-[10px] justify-end items-end
+flex gap-[10px] justify-evenly items-end
 bg-inherit
 `;
 

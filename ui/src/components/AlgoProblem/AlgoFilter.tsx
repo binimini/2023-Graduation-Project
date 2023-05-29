@@ -1,15 +1,13 @@
-import React, { useState } from "react";
-import { useRecoilState, useResetRecoilState } from "recoil";
+import React, {useState} from "react";
+import {useRecoilState} from "recoil";
 import tw from "tailwind-styled-components";
 import SelectBox from "@/components/_styled/Select";
 import InputBox from "@/components/_styled/Input";
 import Tabs from "@/components/_styled/Tabs";
-import {algoProbListState, algoProbLevelState, algoProbCategoryState} from "@/store/algoProbState";
+import {algoProbCategoryState, algoProbLevelState, algoProbListState} from "@/store/algoProbState";
 import axios from "axios";
-import { cursorTo } from "readline";
 import {toastMsgState} from "@/store/toastMsgState";
 import {IAlgoProbInfo} from "@/interface/IAlgoProbLevel";
-import * as process from "process";
 
 interface UserInfo {
     userId: string
@@ -34,16 +32,42 @@ const AlgoFilterContainer = () => {
   const [userInfo, setUserInfo] = useState<UserInfo>();
 
 
-    const transformAlgoProbList = ({ list, length, error }: { list: IAlgoProbInfo[], length: number, error:boolean }) => {
+    const recommendProblems = () => {
+        if (accountId=="") {
+            if (tabNum == 0 && accountId=="") {
+                setToastObj({show:true, msg: '사용자 아이디를 입력해주세요!'})
+                return
+            }
+        }
+        setAlgoProblemList((prev) => {return {list: prev.list, length: prev.length, error:false, loading:true}})
+        axios
+            .post(`http://localhost:8080/api/problems/user/${accountId}/recommends`)
+            .then(({data}) => {
+                if (data == null) {
+                    transformAlgoProbList({ list: [], length: 0, error: true});
+                    return;
+                }
+                transformAlgoProbList({ list: data, length: data.length, error: false });
+            })
+            .catch(() => {
+                transformAlgoProbList({ list: [], length: 0, error: true });
+            });
+    }
+
+    const transformAlgoProbList = ({ list, length, error, loading }: { list: IAlgoProbInfo[], length: number, error:boolean, loading?: boolean}) => {
         const newList = list.map((prob) => {
             prob.categories = (prob.categories as string)
                 .split(";,")
                 .map(category => category.replaceAll(/;| |,|\[|\]/g,""))
                 .map((categoryId: string) => algoProbCategoryList.list.filter(category => category.id == categoryId)[0]);
+            console.log(prob.categories)
+
             return prob
         })
-        setAlgoProblemList({ list: newList, length: length, error: error })
+        console.log(newList)
+        setAlgoProblemList({ list: newList, length: length, error: error, loading: loading==undefined ? false : loading })
     }
+
   const onSearch = () => {
     const url =
       tabNum == 0
@@ -56,11 +80,9 @@ const AlgoFilterContainer = () => {
         return
     }
 
-    axios
+      axios
       .get("http://localhost:8080" + url)
-      .then((res) => {
-        const { data } = res;
-
+      .then(({data}) => {
         if (data == null) {
             if (tabNum==0) {
                 setUserInfo({});
@@ -112,7 +134,7 @@ const AlgoFilterContainer = () => {
                             <div className="dark-1 w-[55%] text-center rounded-[10px] h-fit">{userInfo.level?.name ?? "None"}</div>
                         </div>
                         <div className="text-xs font-bold h-fit w-[80%] rounded-[10px] flex justify-center -my-1 dark-1 ">
-                            <button> 문제추천 </button>
+                            <button onClick={recommendProblems}> 문제추천 </button>
                         </div>
                     </div>
                 </div>

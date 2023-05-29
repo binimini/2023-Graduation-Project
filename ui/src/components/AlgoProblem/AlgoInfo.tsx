@@ -12,6 +12,7 @@ const AlgoInfo = () => {
 
   return (
     <MainDiv className="w-full">
+      {algoProblem.loading ? <BubbleDiv> 문제를 받아오는 중입니다... {Spinner} </BubbleDiv> : null}
       {algoProblem.error ? (
         <TempDiv>
           <i className="fa-solid fa-triangle-exclamation"></i>
@@ -59,7 +60,7 @@ const AlgoInfo = () => {
           </RestraintDiv>
           <RestraintDiv>
             <div> 카테고리 </div>
-            <div className="flex flew-row whitespace-nowrap overflow-x-auto">
+            <div className="flex flew-row whitespace-nowrap overflow-x-auto w-max=[23vw]">
               {(algoProblem.list[probIndex].categories as IAlgoProbCategory[])
                   .map(category => <div className="bright-1 rounded-[3px] text-dark mx-1 w-fit">{category.name}</div>)}
             </div>
@@ -100,7 +101,7 @@ text-m font-bold
 
 const RestraintDiv = tw.div`
 relative right-[2%]
-w-[104%] h-[30px]
+w-[100%] h-[30px]
 mt-[6px] px-[10px]
 flex justify-between items-center
 text-xs font-bold
@@ -119,3 +120,17 @@ text-sm font-bold
 const ContentP = tw.p`
 text-xs leading-5
 `;
+
+const BubbleDiv = tw.div`
+    w-[full] h-fit min-h-[25px]
+    bg-neutral 
+    rounded-[5px]
+    px-[8px] py-[5px]
+    text-[10px]
+    break-words
+`;
+
+const Spinner =
+    <div className="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" role="status">
+      <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+    </div>;

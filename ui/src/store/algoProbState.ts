@@ -10,10 +10,12 @@ const algoProbListInitialState: {
   list: Array<IAlgoProbInfo>;
   length: number;
   error: boolean;
+  loading: boolean
 } = {
   list: [],
   length: 0,
   error: false,
+  loading: false
 };
 
 const algoProbLevelInitialState: { list: Array<IAlgoProbLevel> } = {
