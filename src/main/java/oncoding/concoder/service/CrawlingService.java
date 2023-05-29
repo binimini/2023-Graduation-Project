@@ -127,7 +127,7 @@ public class CrawlingService {
         });
 
         Iterator<Map.Entry<Integer, Double>> iter = sortedMap.entrySet().iterator();
-        int rand = new Random(new Date().getTime()).nextInt(3);
+        int rand = new Random(new Date().getTime()).nextInt(5);
         System.out.println("random number : " + rand);
         for (int i = 0; i < rand; i++) {
             iter.next();

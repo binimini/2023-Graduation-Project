@@ -8,7 +8,7 @@ import javax.transaction.Transactional;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,8 +26,7 @@ public class RecommendService {
         log.info("standard problem number : " + standardNumber);
         OutputStream stdin = process.getOutputStream();
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(stdin));
-        bw.write(standardNumber);
-        bw.newLine();
+        bw.write(Integer.toString(standardNumber));
         bw.close();
 
         // process end
@@ -37,15 +36,17 @@ public class RecommendService {
         InputStream stdout = exitCode!=0 ? process.getErrorStream() : process.getInputStream();
         BufferedReader br =  new BufferedReader(new InputStreamReader(stdout, StandardCharsets.UTF_8));
 
+        List<String> outputs = new ArrayList<>();
         String line;
         while ((line = br.readLine()) != null) {
-            System.out.println(line);
+            outputs.add(line);
         }
-        String numbers = br.readLine();
 
-        String result = exitCode!=0 ? "failed" : "success";
+        String result = exitCode != 0 ? "failed" : "success";
         log.info("run " + result + " with exit code " + exitCode);
 
-        return Arrays.stream(numbers.split(" ")).map(Integer::parseInt).collect(Collectors.toList());
+        if (exitCode != 0) throw new RuntimeException("추천 문제 생성에 실패했습니다");
+
+        return outputs.stream().map(Integer::parseInt).collect(Collectors.toList());
     }
 }

@@ -53,7 +53,7 @@ public class ProblemCustomRepositoryImpl extends QuerydslRepositorySupport imple
                 .leftJoin(problem.level, level)
                 .fetchJoin()
                 .where(problem.level.number.loe(tier))
-                .orderBy(problem.level.number.desc())
+                .orderBy(problem.level.number.desc(), Expressions.numberTemplate(Double.class, "function('rand')").asc())
                 .limit(1)
                 .fetch()
                 .get(0);
