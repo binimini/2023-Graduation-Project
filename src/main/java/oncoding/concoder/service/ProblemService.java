@@ -41,6 +41,12 @@ public class ProblemService {
         return problemRepository.findRandomByCategory(id, 5);
     }
 
+    public int getProblemNumberByCategoryAndTier(int categoryNumber, Integer tier) {
+        // TODO : Non-tier user
+        // TODO : Not Found
+        return problemRepository.findSimilarLevelByCategory(categoryNumber, tier).getNumber();
+    }
+
     @Scheduled(cron = "0 0/20 * * * *")
     public void createProblems() throws IOException {
         Optional<Problem> lastNumberProblem = problemRepository.findTopByOrderByNumberDesc();
@@ -80,5 +86,9 @@ public class ProblemService {
             problems.add(problem);
         }
         problemRepository.saveAll(problems);
+    }
+
+    public List<Problem> getProblemByNumbers(List<Integer> recommends) {
+        return problemRepository.findAllByNumberIn(recommends);
     }
 }

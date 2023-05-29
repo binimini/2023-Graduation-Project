@@ -3,6 +3,8 @@ package oncoding.concoder.repository;
 import static oncoding.concoder.model.QCategory.category;
 import static oncoding.concoder.model.QLevel.level;
 
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.Expressions;
 import java.util.List;
 import java.util.UUID;
@@ -42,5 +44,18 @@ public class ProblemCustomRepositoryImpl extends QuerydslRepositorySupport imple
             .fetch();
     }
 
+    @Override
+    public Problem findSimilarLevelByCategory(int id, int tier) {
+        final  QProblem problem = QProblem.problem;
 
+        return from(problem)
+                .where(problem.categories.contains("["+id+";").or(problem.categories.contains(", "+id+";")))
+                .leftJoin(problem.level, level)
+                .fetchJoin()
+                .where(problem.level.number.loe(tier))
+                .orderBy(problem.level.number.desc())
+                .limit(1)
+                .fetch()
+                .get(0);
+    }
 }

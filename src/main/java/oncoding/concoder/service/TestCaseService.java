@@ -96,9 +96,4 @@ public class TestCaseService {
     HashOperations<String, String, JSONObject> hashOperations = redisTemplate.opsForHash();
     hashOperations.delete(roomId,testCaseId);
   }
-
-
-
-
-  
 }

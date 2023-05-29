@@ -93,6 +93,29 @@ public class ProblemDto {
     @ToString
     @AllArgsConstructor
     @NoArgsConstructor
+    public static class UserTagStruct {
+        private Integer count;
+        private List<UserTagInfo> items;
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UserTagInfo {
+        TagStruct tag;
+        Integer total;
+        Integer solved;
+        Integer partial;
+        Integer tried;
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class CreateRequest {
         private Integer problemId;
         private String titleKo;

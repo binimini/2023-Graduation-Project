@@ -1,8 +1,8 @@
 package oncoding.concoder.controller;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import oncoding.concoder.dto.CategoryDto;
@@ -14,10 +14,7 @@ import oncoding.concoder.mapper.CategoryDtoMapper;
 import oncoding.concoder.mapper.LevelDtoMapper;
 import oncoding.concoder.mapper.ProblemDtoMapper;
 import oncoding.concoder.model.Level;
-import oncoding.concoder.service.CategoryService;
-import oncoding.concoder.service.CrawlingService;
-import oncoding.concoder.service.LevelService;
-import oncoding.concoder.service.ProblemService;
+import oncoding.concoder.service.*;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,6 +32,7 @@ public class ProblemController {
     private final CategoryService categoryService;
     private final LevelService levelService;
     private final CrawlingService crawlingService;
+    private final RecommendService recommendService;
 
     private final CategoryDtoMapper categoryDtoMapper;
     private final LevelDtoMapper levelDtoMapper;
@@ -79,5 +77,21 @@ public class ProblemController {
         UserInfo userInfo = crawlingService.getUserInfo(accountId);
         Level level = levelService.getLevelByNumber(userInfo.getTier());
         return new UserResponse(userInfo, level);
+    }
+
+    // ((총 문제수 * 2) - (푼 문제 수 * 2) - (부분 푼 문제수 * 1) ) * ((총 문제 수) / 100)
+    @PostMapping("/user/{accountId}/recommends")
+    public List<ProblemDto.AllResponse> getRecommendsProblems(@PathVariable("accountId") String accountId) throws Exception {
+       // select category based on user category solve history
+       int categoryNumber = crawlingService.getUserWeakCategoryNumber(accountId);
+
+       System.out.println("선택된 카테고리 : " + categoryNumber);
+       // select standard problem based on selected category, user level
+       UserInfo userInfo = crawlingService.getUserInfo(accountId);
+       int problemNumber =  problemService.getProblemNumberByCategoryAndTier(categoryNumber, userInfo.getTier());
+
+       // recommend similar problems;
+       List<Integer> recommends = recommendService.recommendProblems(problemNumber);
+       return problemDtoMapper.toAllResponseList(problemService.getProblemByNumbers(recommends));
     }
 }

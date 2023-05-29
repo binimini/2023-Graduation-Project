@@ -1,10 +1,8 @@
 package oncoding.concoder.service;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
+import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import oncoding.concoder.dto.ProblemDto;
@@ -28,6 +26,7 @@ public class CrawlingService {
     private static final String BOJ_URL = "https://www.acmicpc.net/problem/";
     private static final String SOLVEDAC_URL = "https://solved.ac/api/v3/problem/lookup?problemIds=";
     private static final String SOLVEDAC_USER_URL = "https://solved.ac/api/v3/search/user?query=";
+    private static final String SOLVEDAC_USER_TAG_URL = "https://solved.ac//api/v3/user/problem_tag_stats?handle=";
     private static final int CRAWLING_COUNT = 10;
 
     public Document connect(int number) throws IOException {
@@ -99,6 +98,41 @@ public class CrawlingService {
 
         if (result.getCount()==0) throw new NoSuchElementException("해당하는 사용자가 없습니다.");
         return result.getItems().get(0);
+    }
+
+    public Integer getUserWeakCategoryNumber(String accountId) {
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<ProblemDto.UserTagStruct> response = restTemplate.exchange(
+                SOLVEDAC_USER_TAG_URL+accountId,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<>(){});
+
+        // TODO : Not Found 처리
+        ProblemDto.UserTagStruct result = response.getBody();
+
+        if (result == null) throw new NoSuchElementException("해당하는 사용자가 없습니다.");
+
+        // TODO : remove magic number
+        List<ProblemDto.UserTagInfo> userTagInfo = result.getItems().stream().filter((tag) -> tag.getTotal() > 300).collect(Collectors.toList());
+
+        Map<Integer, Double> sortedMap = new TreeMap<>();
+
+        userTagInfo.forEach(tag -> {
+            double score = (tag.getTotal() * 2  - tag.getSolved() * 2 - tag.getPartial() * 1) / (double) (tag.getTotal() * 2) * 10  +  (tag.getTotal() / (double) 900);
+            System.out.println(tag.getTag().getDisplayNames().get(0).getName() + " 유형 점수 " + score);
+            System.out.println("전체 해결 "+ tag.getSolved() + " / " + tag.getTotal());
+            System.out.println("부분 해결 "+ tag.getPartial() + " / " + tag.getTotal());
+            sortedMap.put(tag.getTag().getBojTagId(), score);
+        });
+
+        Iterator<Map.Entry<Integer, Double>> iter = sortedMap.entrySet().iterator();
+        int rand = new Random(new Date().getTime()).nextInt(3);
+        System.out.println("random number : " + rand);
+        for (int i = 0; i < rand; i++) {
+            iter.next();
+        }
+        return iter.next().getKey();
     }
 
 }
